@@ -10,6 +10,12 @@ header {
     padding: 10px;
 }
 
+.previous-button {
+    width: 175px;
+    padding: 5px;
+    margin: 5px;
+}
+
 #main-content {
     display: flex;
     flex-direction: row;

@@ -11,17 +11,28 @@ let searchTerm = "";
 let today = "";
 let previousSearch = [];
 
-//lat={lat}&lon={lon}
 
 function getGeoData(location) {
     fetch(openWeatherGeoAPIurl + location + geoLimit + openWeatherAPIkey)
     .then(function(response) {
         if (response.ok) {
             response.json().then(function (data) {
-                if (previousSearch.unshift(data[0].name) > 10) {
-                    previousSearch.pop();
-                }
-                getWeatherData(data[0].lat, data[0].lon);
+                previousSearch.forEach(element => {
+                    if (data[0].name == element) {
+                        getWeatherData(data[0].lat, data[0].lon);
+                        return;
+                    } else {
+                        if (previousSearch.unshift(data[0].name) > 10) {
+                            previousSearch.pop();
+                        }
+                        getWeatherData(data[0].lat, data[0].lon);
+                        return;
+                    }
+                });
+                if (previousSearch == "") {
+                    previousSearch.unshift(data[0].name);
+                    getWeatherData(data[0].lat, data[0].lon); 
+                }      
             });
         } else {
             console.log("Error" + response.statusText);
@@ -36,10 +47,8 @@ function getWeatherData(lat, lon) {
     fetch(openWeatherOneAPIurl + "lat=" + lat + "&lon=" + lon + adjustmentsUrl + openWeatherAPIkey)
     .then(function(response) {
         if (response.ok) {
-            // send to localStorage
             localStorage.setItem("previousSearches", JSON.stringify(previousSearch));
             renderHistory();
-
             response.json().then(function (data) {
                 renderCurrent(data.current.temp, data.current.wind_speed, data.current.humidity, data.current.uvi, data.current.weather[0].icon);
                 renderForecast(data.daily.slice(0, 4));
@@ -53,8 +62,8 @@ function getWeatherData(lat, lon) {
     });
 };
 
+// TODO
 function renderCurrent(temp, wind, humidity, uv, icon) {
-
 
 }
 
@@ -62,21 +71,37 @@ function renderForecast(dailyArray) {
 
 }
 
+
 function renderHistory() {
+    searchHistory.innerHTML = "";
     previousSearch = JSON.parse(localStorage.getItem("previousSearches"));
-    console.log(previousSearch);
+    if (previousSearch == null) {
+        previousSearch = [];
+    }
+    previousSearch.forEach(element => {
+        let newLi = document.createElement("li");
+        let newBtn = document.createElement("button");
+        newBtn.setAttribute("class", "previous-button");
+        newBtn.innerText = element;
+        searchHistory.appendChild(newLi);
+        newLi.appendChild(newBtn);
+    });
+    let formerSearches = document.querySelectorAll(".previous-button");
+    formerSearches.forEach(element => {
+        element.addEventListener("click", function(event){
+            getGeoData(element.innerText);
+        });
+    });
 }
 
 
-// init
 function init(){
-    //render historyList
     today = new Date();
     let dd = String(today.getDate()).padStart(2, "0");
     let mm = String(today.getMonth() + 1).padStart(2, "0");
     let yyyy = today.getFullYear();
     today = mm + "/" + dd + "/" + yyyy;
-    previousSearch = JSON.parse(localStorage.getItem("previousSearches"));
+    renderHistory();
 }
 
 document.querySelector("#search-form").addEventListener("submit", function(event){
@@ -88,7 +113,6 @@ document.querySelector("#search-form").addEventListener("submit", function(event
     } else {
         alert("You must enter a location");
     }
-
 })
 
 init();
