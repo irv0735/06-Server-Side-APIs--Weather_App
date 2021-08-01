@@ -7,7 +7,6 @@ const openWeatherOneAPIurl = "https://api.openweathermap.org/data/2.5/onecall?";
 const openWeatherGeoAPIurl = "http://api.openweathermap.org/geo/1.0/direct?q=";
 const geoLimit = "&limit=1";
 const adjustmentsUrl = "&exclude=minutely,hourly&units=imperial";
-let searchTerm = "";
 let today = "";
 let previousSearch = [];
 
@@ -19,21 +18,21 @@ function getGeoData(location) {
             response.json().then(function (data) {
                 previousSearch.forEach(element => {
                     if (data[0].name == element) {
-                        getWeatherData(data[0].lat, data[0].lon);
-                        return;
-                    } else {
-                        if (previousSearch.unshift(data[0].name) > 10) {
-                            previousSearch.pop();
-                        }
+                        console.log("already in previous search history");
                         getWeatherData(data[0].lat, data[0].lon);
                         return;
                     }
                 });
-                if (previousSearch == "") {
-                    previousSearch.unshift(data[0].name);
-                    getWeatherData(data[0].lat, data[0].lon); 
-                }      
+
+                if (previousSearch.unshift(data[0].name) > 10) {
+                    console.log("history too long");
+                    previousSearch.pop();
+                }
+
+                getWeatherData(data[0].lat, data[0].lon);
+                return;
             });
+            
         } else {
             console.log("Error" + response.statusText);
         }
@@ -47,12 +46,12 @@ function getWeatherData(lat, lon) {
     fetch(openWeatherOneAPIurl + "lat=" + lat + "&lon=" + lon + adjustmentsUrl + openWeatherAPIkey)
     .then(function(response) {
         if (response.ok) {
-            localStorage.setItem("previousSearches", JSON.stringify(previousSearch));
-            renderHistory();
             response.json().then(function (data) {
                 renderCurrent(data.current.temp, data.current.wind_speed, data.current.humidity, data.current.uvi, data.current.weather[0].icon);
                 renderForecast(data.daily.slice(0, 4));
             });
+            localStorage.setItem("previousSearches", JSON.stringify(previousSearch));
+            renderHistory();
         } else {
             console.log("Error" + response.statusText);
         }
@@ -89,7 +88,8 @@ function renderHistory() {
     let formerSearches = document.querySelectorAll(".previous-button");
     formerSearches.forEach(element => {
         element.addEventListener("click", function(event){
-            getGeoData(element.innerText);
+            let adjustedSearch = element.innerText.replace(" ", "+");
+            getGeoData(adjustedSearch);
         });
     });
 }
