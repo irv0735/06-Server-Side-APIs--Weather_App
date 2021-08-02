@@ -33,15 +33,23 @@ span {
 }
 
 #current-weather {
-    width: auto;
-    height: 350px;
+    width: 700px;
+    height: 250px;
     margin-left: 30px;
+    margin-top: 30px;
+    border: solid black 3px;
+    padding-left: 10px;
 }
 
 #forecast {
     width: auto;
     margin-left: 30px;
 }
+
+#forecast-table td {
+    background-color: rgb(71, 64, 110);
+    color: white;
+} 
 
 #search-term {
     width: 300px;
@@ -53,5 +61,6 @@ span {
     padding: 5px;
     margin-top: 10px;
 }
+
 
 
