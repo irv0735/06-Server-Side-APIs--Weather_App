@@ -25,7 +25,6 @@ function getGeoData(location) {
                 // });
 
                 if (previousSearch.unshift(data[0].name) > 10) {
-                    console.log("history too long");
                     previousSearch.pop();
                 }
 
@@ -72,7 +71,7 @@ function renderCurrent(temp, wind, humidity, uv, icon) {
     currentWeather.appendChild(newH2);
 
     let newPtemp = document.createElement("p");
-    newPtemp.innerHTML = "Temp: " + temp + "\u00B0 F";
+    newPtemp.innerHTML = "Temp: " + temp + " \u00B0F";
     currentWeather.appendChild(newPtemp);
 
     let newPwind = document.createElement("p");
@@ -99,8 +98,30 @@ function renderCurrent(temp, wind, humidity, uv, icon) {
 }
 
 function renderForecast(forecastArray) {
-    console.log(dailyArray);
-    console.log(forecastArray);
+    for (i=0; i<forecastArray.length; i++) {
+        let newDailyTd = document.createElement("td");
+        let newh3 = document.createElement("h3");
+        newh3.innerHTML = dailyArray[i+1];
+        newDailyTd.appendChild(newh3);
+
+        let forecastIcon = document.createElement("img");
+        forecastIcon.setAttribute("src", "http://openweathermap.org/img/wn/" + forecastArray[i].weather[0].icon + ".png")
+        newDailyTd.appendChild(forecastIcon);
+
+        let forecastTemp = document.createElement("p");
+        forecastTemp.innerHTML = "Temp: " + forecastArray[i].temp.day + " \u00B0F";
+        newDailyTd.appendChild(forecastTemp);
+
+        let forecastWind = document.createElement("p");
+        forecastWind.innerHTML = "Wind: " + forecastArray[i].wind_speed + " MPH";
+        newDailyTd.appendChild(forecastWind);
+
+        let forecatHumidity = document.createElement("p");
+        forecatHumidity.innerHTML = "Humidity: " + forecastArray[i].humidity + " %";
+        newDailyTd.appendChild(forecatHumidity);
+
+        forecastTable.appendChild(newDailyTd);
+    }
 }
 
 
