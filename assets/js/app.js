@@ -7,7 +7,7 @@ const openWeatherOneAPIurl = "https://api.openweathermap.org/data/2.5/onecall?";
 const openWeatherGeoAPIurl = "http://api.openweathermap.org/geo/1.0/direct?q=";
 const geoLimit = "&limit=1";
 const adjustmentsUrl = "&exclude=minutely,hourly&units=imperial";
-let today = "";
+let dailyArray = [];
 let previousSearch = [];
 
 
@@ -48,7 +48,7 @@ function getWeatherData(lat, lon) {
         if (response.ok) {
             response.json().then(function (data) {
                 renderCurrent(data.current.temp, data.current.wind_speed, data.current.humidity, data.current.uvi, data.current.weather[0].icon);
-                renderForecast(data.daily.slice(0, 4));
+                renderForecast(data.daily.slice(0, 5));
             });
             localStorage.setItem("previousSearches", JSON.stringify(previousSearch));
             renderHistory();
@@ -65,7 +65,7 @@ function getWeatherData(lat, lon) {
 function renderCurrent(temp, wind, humidity, uv, icon) {
     currentWeather.innerHTML = "";
     let newH2 = document.createElement("h2");
-    newH2.innerHTML = previousSearch[0] + " (" + today + ") ";
+    newH2.innerHTML = previousSearch[0] + " (" + dailyArray[0] + ") ";
     let newIcon = document.createElement("img");
     newIcon.setAttribute("src", "http://openweathermap.org/img/wn/" + icon + ".png");
     newH2.appendChild(newIcon);
@@ -98,8 +98,9 @@ function renderCurrent(temp, wind, humidity, uv, icon) {
     currentWeather.appendChild(newPuv);
 }
 
-function renderForecast(dailyArray) {
-
+function renderForecast(forecastArray) {
+    console.log(dailyArray);
+    console.log(forecastArray);
 }
 
 
@@ -126,13 +127,21 @@ function renderHistory() {
     });
 }
 
+function getDays(){
+    let today = new Date();
+    for (i=0; i<6; i++) {
+        let newDate = new Date(Number(today));
+        newDate.setDate(today.getDate() + i);
+        let dd = String(newDate.getDate()).padStart(2, "0");
+        let mm = String(newDate.getMonth()+ 1).padStart(2, "0");
+        let yyyy = newDate.getFullYear();
+        dailyArray[i] = mm + "/" + dd + "/" + yyyy;
+    }
+}
+
 
 function init(){
-    today = new Date();
-    let dd = String(today.getDate()).padStart(2, "0");
-    let mm = String(today.getMonth() + 1).padStart(2, "0");
-    let yyyy = today.getFullYear();
-    today = mm + "/" + dd + "/" + yyyy;
+    getDays();
     renderHistory();
 }
 
