@@ -63,7 +63,39 @@ function getWeatherData(lat, lon) {
 
 // TODO
 function renderCurrent(temp, wind, humidity, uv, icon) {
+    currentWeather.innerHTML = "";
+    let newH2 = document.createElement("h2");
+    newH2.innerHTML = previousSearch[0] + " (" + today + ") ";
+    let newIcon = document.createElement("img");
+    newIcon.setAttribute("src", "http://openweathermap.org/img/wn/" + icon + ".png");
+    newH2.appendChild(newIcon);
+    currentWeather.appendChild(newH2);
 
+    let newPtemp = document.createElement("p");
+    newPtemp.innerHTML = "Temp: " + temp + "\u00B0 F";
+    currentWeather.appendChild(newPtemp);
+
+    let newPwind = document.createElement("p");
+    newPwind.innerHTML = "Wind: " + wind + " MPH";
+    currentWeather.appendChild(newPwind);
+
+    let newPhumidity = document.createElement("p");
+    newPhumidity.innerHTML = "Humidity: " + humidity + " %";
+    currentWeather.appendChild(newPhumidity);
+
+    let newPuv = document.createElement("p");
+    let newSpanUv = document.createElement("span");
+    newSpanUv.innerHTML = uv;
+    if (uv <=2) {
+        newSpanUv.setAttribute("style", "background-color: green; color: white;")
+    } else if (uv <=5) {
+        newSpanUv.setAttribute("style", "background-color: yellow;")
+    } else {
+        newSpanUv.setAttribute("style", "background-color: red; color: white;");
+    }
+    newPuv.innerHTML = "UV Index: "
+    newPuv.appendChild(newSpanUv);
+    currentWeather.appendChild(newPuv);
 }
 
 function renderForecast(dailyArray) {
