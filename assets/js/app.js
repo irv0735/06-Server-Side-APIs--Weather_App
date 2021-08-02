@@ -16,13 +16,13 @@ function getGeoData(location) {
     .then(function(response) {
         if (response.ok) {
             response.json().then(function (data) {
-                previousSearch.forEach(element => {
-                    if (data[0].name == element) {
-                        console.log("already in previous search history");
-                        getWeatherData(data[0].lat, data[0].lon);
-                        return;
-                    }
-                });
+                // previousSearch.forEach(element => {
+                //     if (data[0].name == element) {
+                //         console.log("already in previous search history");
+                //         getWeatherData(data[0].lat, data[0].lon);
+                //         return;
+                //     }
+                // });
 
                 if (previousSearch.unshift(data[0].name) > 10) {
                     console.log("history too long");
