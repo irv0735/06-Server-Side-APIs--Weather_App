@@ -1,5 +1,6 @@
 body {
     margin: 0;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 header {
@@ -34,7 +35,7 @@ span {
 
 #current-weather {
     width: 700px;
-    height: 250px;
+    height: 300px;
     margin-left: 30px;
     margin-top: 30px;
     border: solid black 3px;
@@ -49,6 +50,7 @@ span {
 #forecast-table td {
     background-color: rgb(71, 64, 110);
     color: white;
+    padding: 10px;
 } 
 
 #search-term {
