@@ -10,7 +10,12 @@ const adjustmentsUrl = "&exclude=minutely,hourly&units=imperial";
 let dailyArray = [];
 let previousSearch = [];
 
-
+/**
+ * Takes the adjusted search term (spaces replaced with +) as an input and fetches the API response to get the lat/lon for
+ * the location. Then calls a new function, passing the received lat/lon.
+ * @author Nate Irvin <nathan.a.irvin@gmail.com>
+ * @param {string} location 
+ */
 function getGeoData(location) {
     fetch(openWeatherGeoAPIurl + location + geoLimit + openWeatherAPIkey)
     .then(function(response) {
@@ -43,6 +48,12 @@ function getGeoData(location) {
     });
 };
 
+/**
+ * function takes the lat/lon and calls weather api to fetch data. It then calls additional functions, passing the data received
+ * @author Nate Irvin <nathan.a.irvin@gmail.com>
+ * @param {number} lat 
+ * @param {number} lon 
+ */
 function getWeatherData(lat, lon) {
     fetch(openWeatherOneAPIurl + "lat=" + lat + "&lon=" + lon + adjustmentsUrl + openWeatherAPIkey)
     .then(function(response) {
@@ -62,7 +73,15 @@ function getWeatherData(lat, lon) {
     });
 };
 
-
+/**
+ * Renders the weather information received on the page in the current weather section
+ * @author Nate Irvin <nathan.a.irvin@gmail.com>
+ * @param {number} temp 
+ * @param {number} wind 
+ * @param {number} humidity 
+ * @param {number} uv 
+ * @param {string} icon 
+ */
 function renderCurrent(temp, wind, humidity, uv, icon) {
     currentWeather.innerHTML = "";
     let newH2 = document.createElement("h2");
@@ -99,6 +118,11 @@ function renderCurrent(temp, wind, humidity, uv, icon) {
     currentWeather.appendChild(newPuv);
 }
 
+/**
+ * Renders the forecast on the page in the forecast section
+ * @author Nate Irvin <nathan.a.irvin@gmail.com>
+ * @param {array} forecastArray 
+ */
 function renderForecast(forecastArray) {
     forecastTable.innerHTML = "";
     for (i=0; i<forecastArray.length; i++) {
@@ -127,7 +151,10 @@ function renderForecast(forecastArray) {
     }
 }
 
-
+/**
+ * renders the search history on the page (pulled from local storage)
+ * @author Nate Irvin <nathan.a.irvin@gmail.com>
+ */
 function renderHistory() {
     searchHistory.innerHTML = "";
     previousSearch = JSON.parse(localStorage.getItem("previousSearches"));
@@ -151,6 +178,10 @@ function renderHistory() {
     });
 }
 
+/**
+ * gets the current day and next 5 days and stores them in an array
+ * @author Nate Irvin <nathan.a.irvin@gmail.com>
+ */
 function getDays(){
     let today = new Date();
     for (i=0; i<6; i++) {
