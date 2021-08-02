@@ -16,20 +16,22 @@ function getGeoData(location) {
     .then(function(response) {
         if (response.ok) {
             response.json().then(function (data) {
-                // previousSearch.forEach(element => {
-                //     if (data[0].name == element) {
-                //         console.log("already in previous search history");
-                //         getWeatherData(data[0].lat, data[0].lon);
-                //         return;
-                //     }
-                // });
-
-                if (previousSearch.unshift(data[0].name) > 10) {
-                    previousSearch.pop();
-                }
-
-                getWeatherData(data[0].lat, data[0].lon);
-                return;
+                let checkExist = false;
+                previousSearch.forEach(element => {
+                    if (data[0].name == element) {
+                        checkExist = true;
+                        previousSearch.unshift(previousSearch.splice(previousSearch.indexOf(element), 1))
+                        getWeatherData(data[0].lat, data[0].lon);
+                        return;
+                    }
+                });
+                if (!checkExist) {
+                    if (previousSearch.unshift(data[0].name) > 10) {
+                        previousSearch.pop();
+                    }
+                    getWeatherData(data[0].lat, data[0].lon);
+                    return;
+                } 
             });
             
         } else {
@@ -60,7 +62,7 @@ function getWeatherData(lat, lon) {
     });
 };
 
-// TODO
+
 function renderCurrent(temp, wind, humidity, uv, icon) {
     currentWeather.innerHTML = "";
     let newH2 = document.createElement("h2");
@@ -98,6 +100,7 @@ function renderCurrent(temp, wind, humidity, uv, icon) {
 }
 
 function renderForecast(forecastArray) {
+    forecastTable.innerHTML = "";
     for (i=0; i<forecastArray.length; i++) {
         let newDailyTd = document.createElement("td");
         let newh3 = document.createElement("h3");
