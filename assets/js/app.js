@@ -4,7 +4,7 @@ const forecastTable = document.querySelector("#forecast-table");
 
 const openWeatherAPIkey = "&appid=1057847a31bdd1cca5308fb38057c338";
 const openWeatherOneAPIurl = "https://api.openweathermap.org/data/2.5/onecall?";
-const openWeatherGeoAPIurl = "http://api.openweathermap.org/geo/1.0/direct?q=";
+const openWeatherGeoAPIurl = "https://api.openweathermap.org/geo/1.0/direct?q=";
 const geoLimit = "&limit=1";
 const adjustmentsUrl = "&exclude=minutely,hourly&units=imperial";
 let dailyArray = [];
