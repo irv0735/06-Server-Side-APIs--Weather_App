@@ -10,6 +10,12 @@ header {
     padding: 10px;
 }
 
+span {
+    padding: 8px;
+    border-radius: 3px;
+    
+}
+
 .previous-button {
     width: 175px;
     padding: 5px;
