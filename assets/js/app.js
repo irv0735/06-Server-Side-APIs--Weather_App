@@ -22,26 +22,32 @@ function getGeoData(location) {
         if (response.ok) {
             response.json().then(function (data) {
                 let checkExist = false;
-                previousSearch.forEach(element => {
-                    if (data[0].name == element) {
-                        checkExist = true;
-                        previousSearch.unshift(previousSearch.splice(previousSearch.indexOf(element), 1))
+                if (data[0]) {
+                    previousSearch.forEach(element => {
+                        if (data[0].name == element) {
+                            checkExist = true;
+                            previousSearch.unshift(previousSearch.splice(previousSearch.indexOf(element), 1))
+                            getWeatherData(data[0].lat, data[0].lon);
+                            return;
+                        }
+                    });
+                    if (!checkExist) {
+                        if (previousSearch.unshift(data[0].name) > 10) {
+                            previousSearch.pop();
+                        }
                         getWeatherData(data[0].lat, data[0].lon);
                         return;
-                    }
-                });
-                if (!checkExist) {
-                    if (previousSearch.unshift(data[0].name) > 10) {
-                        previousSearch.pop();
-                    }
-                    getWeatherData(data[0].lat, data[0].lon);
+                    } 
+                } else {
+                    alert("Please enter a valid location.")
                     return;
-                } 
+                }
             });
-            
         } else {
-            console.log("Error" + response.statusText);
+            alert("Please enter a valid location.");
+            console.log("Error " + response.statusText);
         }
+        return;
     })
     .catch(function (error) {
         console.log("unable to connect to openweathergeo");
