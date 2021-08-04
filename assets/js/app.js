@@ -66,7 +66,7 @@ function getWeatherData(lat, lon) {
         if (response.ok) {
             response.json().then(function (data) {
                 renderCurrent(data.current.temp, data.current.wind_speed, data.current.humidity, data.current.uvi, data.current.weather[0].icon);
-                renderForecast(data.daily.slice(0, 5));
+                renderForecast(data.daily.slice(1, 6));
             });
             localStorage.setItem("previousSearches", JSON.stringify(previousSearch));
             renderHistory();
