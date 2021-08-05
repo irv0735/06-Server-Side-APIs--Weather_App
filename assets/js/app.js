@@ -195,11 +195,9 @@ function renderHistory() {
  * @param {Number} timeOffset The number of seconds offset from UTC
  */
 function getDate(timestamp, timeOffset){
-    console.log(timeOffset);
     const zoneCorrected = timestamp + timeOffset
     const milliseconds = zoneCorrected*1000;
     const dateObject = new Date(milliseconds);
-    console.log(dateObject.toLocaleString("en-US", {hour: "numeric"}));
     const displayableDateFormat = dateObject.toLocaleString("en-US", {month: "numeric"}) +
          "/" + dateObject.toLocaleString("en-US", {day: "numeric"}) + 
          "/" + dateObject.toLocaleString("en-US", {year: "numeric"});
