@@ -7,7 +7,6 @@ const openWeatherOneAPIurl = "https://api.openweathermap.org/data/2.5/onecall?";
 const openWeatherGeoAPIurl = "https://api.openweathermap.org/geo/1.0/direct?q=";
 const geoLimit = "&limit=1";
 const adjustmentsUrl = "&exclude=minutely,hourly&units=imperial";
-let dailyArray = [];
 let previousSearch = [];
 
 /**
@@ -65,8 +64,8 @@ function getWeatherData(lat, lon) {
     .then(function(response) {
         if (response.ok) {
             response.json().then(function (data) {
-                renderCurrent(data.current.temp, data.current.wind_speed, data.current.humidity, data.current.uvi, data.current.weather[0].icon);
-                renderForecast(data.daily.slice(1, 6));
+                renderCurrent(data.current.dt, data.timezone_offset, data.current.temp, data.current.wind_speed, data.current.humidity, data.current.uvi, data.current.weather[0].icon);
+                renderForecast(data.daily.slice(1, 6), data.timezone_offset);
             });
             localStorage.setItem("previousSearches", JSON.stringify(previousSearch));
             renderHistory();
@@ -82,16 +81,19 @@ function getWeatherData(lat, lon) {
 /**
  * Renders the weather information received on the page in the current weather section
  * @author Nate Irvin <nathan.a.irvin@gmail.com>
+ * @param {number} date
+ * @param {number} offset
  * @param {number} temp 
  * @param {number} wind 
  * @param {number} humidity 
  * @param {number} uv 
  * @param {string} icon 
  */
-function renderCurrent(temp, wind, humidity, uv, icon) {
+function renderCurrent(date, offset, temp, wind, humidity, uv, icon) {
     currentWeather.innerHTML = "";
     let newH2 = document.createElement("h2");
-    newH2.innerHTML = previousSearch[0] + " (" + dailyArray[0] + ") ";
+    let currentDate = getDate(date, offset);
+    newH2.innerHTML = previousSearch[0] + " (" + currentDate + ") ";
     let newIcon = document.createElement("img");
     newIcon.setAttribute("src", "http://openweathermap.org/img/wn/" + icon + ".png");
     newH2.appendChild(newIcon);
@@ -127,14 +129,16 @@ function renderCurrent(temp, wind, humidity, uv, icon) {
 /**
  * Renders the forecast on the page in the forecast section
  * @author Nate Irvin <nathan.a.irvin@gmail.com>
- * @param {array} forecastArray 
+ * @param {array} forecastArray
+ * @param {number} offset the UTC offset 
  */
-function renderForecast(forecastArray) {
+function renderForecast(forecastArray, offset) {
     forecastTable.innerHTML = "";
     for (i=0; i<forecastArray.length; i++) {
         let newDailyTd = document.createElement("td");
         let newh3 = document.createElement("h3");
-        newh3.innerHTML = dailyArray[i+1];
+        let nextDate = getDate(forecastArray[i].dt, offset)
+        newh3.innerHTML = nextDate;
         newDailyTd.appendChild(newh3);
 
         let forecastIcon = document.createElement("img");
@@ -185,24 +189,25 @@ function renderHistory() {
 }
 
 /**
- * gets the current day and next 5 days and stores them in an array
+ * Converts a unix timestamp to date string
  * @author Nate Irvin <nathan.a.irvin@gmail.com>
+ * @param {number} timestamp UNIX Timestamp
+ * @param {Number} timeOffset The number of seconds offset from UTC
  */
-function getDays(){
-    let today = new Date();
-    for (i=0; i<6; i++) {
-        let newDate = new Date(Number(today));
-        newDate.setDate(today.getDate() + i);
-        let dd = String(newDate.getDate()).padStart(2, "0");
-        let mm = String(newDate.getMonth()+ 1).padStart(2, "0");
-        let yyyy = newDate.getFullYear();
-        dailyArray[i] = mm + "/" + dd + "/" + yyyy;
-    }
+function getDate(timestamp, timeOffset){
+    console.log(timeOffset);
+    const zoneCorrected = timestamp + timeOffset
+    const milliseconds = zoneCorrected*1000;
+    const dateObject = new Date(milliseconds);
+    console.log(dateObject.toLocaleString("en-US", {hour: "numeric"}));
+    const displayableDateFormat = dateObject.toLocaleString("en-US", {month: "numeric"}) +
+         "/" + dateObject.toLocaleString("en-US", {day: "numeric"}) + 
+         "/" + dateObject.toLocaleString("en-US", {year: "numeric"});
+    return displayableDateFormat;
 }
 
 
 function init(){
-    getDays();
     renderHistory();
 }
 
